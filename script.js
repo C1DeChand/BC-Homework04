@@ -1,31 +1,13 @@
-// timer content //
+// Variables //
 
-var start = document.getElementById("start");
-var questionsList = document.getElementById("question-text");
-
-function startTimer(duration, display) {
-    var timer = duration, minutes, seconds;
-    setInterval(function () {
-        minutes = parseInt(timer / 60, 10);
-        seconds = parseInt(timer % 60, 10);
-
-        minutes = minutes < 10 ? "0" + minutes : minutes;
-        seconds = seconds < 10 ? "0" + seconds : seconds;
-
-        display.textContent = minutes + ":" + seconds;
-
-        if (--timer < 0) {
-            timer = duration;
-        }
-    }, 1000);
-}
-
-function begin() {
-        var twoMinutes = 60 * 1,
-            display = document.querySelector("#time");
-        startTimer(twoMinutes, display);
-        document.getElementById("startBox").innerHTML = "";
-};
+var optionOne = document.getElementById("answerOne");
+var optionTwo = document.getElementById("answerTwo");
+var optionThree = document.getElementById("answerThree");
+var counter = document.getElementById("counter");
+var scoreDiv = document.getElementById("scoreContainer");
+var questionIndex = 0;
+var count = 0;
+var score = 0;
 
 // Quiz questions display //
 
@@ -69,30 +51,123 @@ var questionsList = [
 
 console.log(questionsList)
 
-// question controls //
+// timer content //
 
-// var optionOne = document.getElementById("answerOne");
-// var optionTwo = document.getElementById("answerTwo");
-// var optionThree = document.getElementById("answerThree");
-var counter = document.getElementById("counter");
-var scoreDiv = document.getElementById("scoreContainer");
-var lastQuestion = questionsList.length - 1;
-var questionIndex = 0;
-var count = 0;
-var score = 0;
+var start = document.getElementById("start");
 
-function showQuestion(){
-    var questions = questionsList[questionIndex];
-    
-    questions.getElementById("question-text").textContent = questionsList.question;
-    questions.getElementById("answerOne").textContent = questionsList.optionA;
-    questions.getElementById("answerTwo").textContent = questionsList.optionB;
-    questions.getElementById("answerThree").textContent = questionsList.optionC;
+function startTimer(duration, display) {
+    var timer = duration, minutes, seconds;
+    setInterval(function () {
+        minutes = parseInt(timer / 60, 10);
+        seconds = parseInt(timer % 60, 10);
 
-    console.log(showQuestion)
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        display.innerHTML = minutes + ":" + seconds;
+
+        if (--timer === 0) {
+            display = 0
+            alert("Times Up!")
+            clear()
+            GameOver()
+        }
+    }, 1000);
 }
 
-start.addEventListener("click",begin);
+start.addEventListener("click", begin);
+
+function begin() {
+    var twoMinutes = 60 * 0.5,
+        display = document.querySelector("#time");
+    startTimer(twoMinutes, display);
+        document.getElementById("startBox").innerHTML = "";
+        showQuestion()
+};
+
+// question controls //
+
+var lastQuestion = questionsList.length - 1;
+
+function clear() {
+    document.getElementById("card-display").innerHTML = "";
+}
+
+function GameOver() {
+        document.getElementById("card-display").innerHTML = "<br><br><br><br><br><h1><strong>GAME OVER</strong></h1><br><br><br><br><br><button id='next'>Go to Scoreboard</button>"
+    var next = document.getElementById("next");
+        next.addEventListener("click", leaderboard())
+}
+
+// leaderboard and local storage //
+
+function leaderboard() {
+        document.getElementById("card-display").innerHTML = "<br><br><br><br><br><form id='leaderboard' method='POST'><label for='list-text'>Enter Name Here</label><input type='text' placeholder='Tony Stark' name='list-text' id='list-text' /></form><ul id='name-list'></ul>"
+    
+    var todos = [];
+    var todoInput = document.querySelector("#list-text");
+    var todoForm = document.querySelector("#leaderboard");
+    var todoList = document.querySelector("#name-list");
+
+    init();
+
+    function renderTodos() {
+        todoList.innerHTML = "";
+        todoCountSpan.innerHTML = todos.length;
+
+    for (var i = 0; i < todos.length; i++) {
+        var todo = todos[i];
+
+        var li = document.createElement("li");
+            li.innerHTML = todo;
+            li.setAttribute("data-index", i);
+
+        todoList.appendChild(li);
+        }
+    }
+
+    function init() {
+        var storedTodos = JSON.parse(localStorage.getItem("todos"));
+        if (storedTodos !== null) {
+            todos = storedTodos;
+        }
+
+        renderTodos();
+    }
+    function storeTodos() {
+    localStorage.setItem("todos", JSON.stringify(todos));
+    }
+    todoForm.addEventListener("submit", function(event) {
+        event.preventDefault();
+  
+        var todoText = todoInput.value.trim();
+    if (todoText === "") {
+        return;
+    }
+        todos.push(todoText);
+        todoInput.value = "";
+    storeTodos();
+    renderTodos();
+    });
+}
+
+
+function showQuestion(){
+   
+        document.getElementById("question-text").innerHTML = (questionsList[questionIndex].question);
+        document.getElementById("answerOne").innerHTML = (questionsList[questionIndex].optionA);
+        document.getElementById("answerTwo").innerHTML = (questionsList[questionIndex].optionB);
+        document.getElementById("answerThree").innerHTML = (questionsList[questionIndex].optionC);
+    
+};
+
+optionOne.addEventListener("click", factCheck)
+optionTwo.addEventListener("click", factCheck)
+optionThree.addEventListener("click", factCheck)
+
+console.log(questionIndex)
+console.log(count)
+console.log(score)
 
 // question box visibility //
 
@@ -102,7 +177,7 @@ start.onclick = () => {
       vis.classList.remove("visibility");
   
     }
-  }
+}
 
   // scorekeeper //
 
@@ -110,33 +185,42 @@ function factCheck(answer){
     if( answer == questionsList[questionIndex].correct){
         score++;
         correctAnswer();
-    }else{
+        questionIndex++;
+        
+    }
+    else{
+        questionIndex++;
         incorrectAnswer();
+        
     }
     count = 0;
     if(questionIndex < lastQuestion){
-        questionIndex++;
         showQuestion();
-    }else{
-        score();
+    }
+    else{
+        GameOver();
     }
 }
 
+// alerts for correct/incorrect //
+
 function correctAnswer(){
-    document.getElementById(questionIndex).innerHTML = "Correct!";
+    document.getElementById("outcome").innerHTML = "<h2>Correct!</h2>";
+    document.getElementById("audio").innerHTML= "<embed src='/Assets/sfx/correct.wav' hidden='true' autostart='true' loop='false' />";
 }
 
 function incorrectAnswer(){
-    document.getElementById(questionIndex).innerHTML = "Incorrect!";
+    document.getElementById("outcome").innerHTML = "<h2>Incorrect!</h2>";
+    document.getElementById("audio").innerHTML= "<embed src='/Assets/sfx/incorrect.wav' hidden='true' autostart='true' loop='false' />";
 }
 
-// scoreboard //
 
-function scoreFn(){
-    scoreDiv.innerHTML += "<p>"+ score +"</p>";
-}
 
-// FOR SAFE KEEPING ////////////////////////////////////////////////////////
+
+
+
+
+// FOR SAFE KEEPING - MAY BE USEFUL LATER ////////////////////////////////////////////////////////
 
 // var score = 0;
 // var questionsList = [
