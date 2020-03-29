@@ -78,7 +78,7 @@ function startTimer(duration, display) {
 start.addEventListener("click", begin);
 
 function begin() {
-    var twoMinutes = 60 * 0.5,
+    var twoMinutes = 60 * 1,
         display = document.querySelector("#time");
     startTimer(twoMinutes, display);
         document.getElementById("startBox").innerHTML = "";
