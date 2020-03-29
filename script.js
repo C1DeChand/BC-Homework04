@@ -17,35 +17,38 @@ var questionsList = [
         optionA: "Alert",
         optionB: "Boolean",
         optionC: "String",
-        correct: "A"
+        correct: "optionA"
     },
     {
         question: "Who created JavaScript?",
         optionA: "Sheryl Sandberg",
         optionB: "Brendan Eich",
         optionC: "Douglas Crockford",
-        correct: "B"
+        correct: "optionB"
     },
     {
         question: "Which syntax belongs to JavaScript?",
         optionA: ".className { color: red; }",
         optionB: "document.getElementById()",
         optionC: "<p>This is text</p>",
-        correct: "B"
+        correct: "optionB"
     },
     {
         question: "Where can you find <script> tags in an HTML file?",
         optionA: "<body>",
         optionB: "<head>",
         optionC: "Both",
-        correct: "C"
+        correct: "optionC"
+        // changed innerHTML into textContent and all tags showed up. oops.
     },
     {
         question: "If a variable is defined globally in JavaScript, where can it be used?",
         optionA: "Only in child functions",
         optionB: "Anywhere",
         optionC: "Variables cannot be defined globally",
-        correct: "B"
+        correct: "optionB"
+
+        // changing correct's from "correct: X" to "correct: optionX" inverted problem, now all answers are correct instead of incorrect //
     }
 ];
 
@@ -87,16 +90,19 @@ function begin() {
 
 // question controls //
 
-var lastQuestion = questionsList.length - 1;
+var lastQuestion = questionsList.length;
 
 function clear() {
     document.getElementById("card-display").innerHTML = "";
 }
 
 function GameOver() {
-        document.getElementById("card-display").innerHTML = "<br><br><br><br><br><h1><strong>GAME OVER</strong></h1><br><br><br><br><br><button id='next'>Go to Scoreboard</button>"
-    var next = document.getElementById("next");
-        next.addEventListener("click", leaderboard())
+        document.getElementById("card-display").innerHTML = "<br><br><br><br><br><h1><strong>GAME OVER</strong></h1><br><br><br><br><br><button type='submit' id='next'>Go to Scoreboard</button>"
+
+// this following var/eventlistener causes the leaderboard/gameover bug //
+
+        var next = document.getElementById("next");
+            next.addEventListener("submit", leaderboard())
 }
 
 // leaderboard and local storage //
@@ -154,10 +160,10 @@ function leaderboard() {
 
 function showQuestion(){
    
-        document.getElementById("question-text").innerHTML = (questionsList[questionIndex].question);
-        document.getElementById("answerOne").innerHTML = (questionsList[questionIndex].optionA);
-        document.getElementById("answerTwo").innerHTML = (questionsList[questionIndex].optionB);
-        document.getElementById("answerThree").innerHTML = (questionsList[questionIndex].optionC);
+        document.getElementById("question-text").textContent = questionsList[questionIndex].question;
+        document.getElementById("answerOne").textContent = questionsList[questionIndex].optionA;
+        document.getElementById("answerTwo").textContent = questionsList[questionIndex].optionB;
+        document.getElementById("answerThree").textContent = questionsList[questionIndex].optionC;
     
 };
 
@@ -181,8 +187,9 @@ start.onclick = () => {
 
   // scorekeeper //
 
-function factCheck(answer){
-    if( answer == questionsList[questionIndex].correct){
+function factCheck() {
+    var correct = questionsList[questionIndex].correct
+    if( correct == questionsList[questionIndex].correct){
         score++;
         correctAnswer();
         questionIndex++;
