@@ -71,14 +71,11 @@ function startTimer(duration, display) {
 
         if (--timer === 0) {
             display = 0
-            alert("Times Up!")
             clear()
             GameOver()
         }
     }, 1000);
 }
-
-start.addEventListener("click", begin);
 
 function begin() {
     var twoMinutes = 60 * 1,
@@ -87,6 +84,8 @@ function begin() {
         document.getElementById("startBox").innerHTML = "";
         showQuestion()
 };
+
+start.addEventListener("click", begin);
 
 // question controls //
 
@@ -101,8 +100,8 @@ function GameOver() {
 
 // this following var/eventlistener causes the leaderboard/gameover bug //
 
-        var next = document.getElementById("next");
-            next.addEventListener("submit", leaderboard())
+        // var next = document.getElementById("next");
+        //     next.addEventListener("submit", leaderboard())
 }
 
 // leaderboard and local storage //
@@ -110,51 +109,6 @@ function GameOver() {
 function leaderboard() {
         document.getElementById("card-display").innerHTML = "<br><br><br><br><br><form id='leaderboard' method='POST'><label for='list-text'>Enter Name Here</label><input type='text' placeholder='Tony Stark' name='list-text' id='list-text' /></form><ul id='name-list'></ul>"
     
-    var todos = [];
-    var todoInput = document.querySelector("#list-text");
-    var todoForm = document.querySelector("#leaderboard");
-    var todoList = document.querySelector("#name-list");
-
-    init();
-
-    function renderTodos() {
-        todoList.innerHTML = "";
-        todoCountSpan.innerHTML = todos.length;
-
-    for (var i = 0; i < todos.length; i++) {
-        var todo = todos[i];
-
-        var li = document.createElement("li");
-            li.innerHTML = todo;
-            li.setAttribute("data-index", i);
-
-        todoList.appendChild(li);
-        }
-    }
-
-    function init() {
-        var storedTodos = JSON.parse(localStorage.getItem("todos"));
-        if (storedTodos !== null) {
-            todos = storedTodos;
-        }
-
-        renderTodos();
-    }
-    function storeTodos() {
-    localStorage.setItem("todos", JSON.stringify(todos));
-    }
-    todoForm.addEventListener("submit", function(event) {
-        event.preventDefault();
-  
-        var todoText = todoInput.value.trim();
-    if (todoText === "") {
-        return;
-    }
-        todos.push(todoText);
-        todoInput.value = "";
-    storeTodos();
-    renderTodos();
-    });
 }
 
 
